@@ -1,6 +1,7 @@
 apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+kind: Policy
 metadata:
+  namespace: demo
   annotations:
     policies.kyverno.io/category: Security
     policies.kyverno.io/description: Ensures all pods have the required label foo=bar for compliance and security purposes.
