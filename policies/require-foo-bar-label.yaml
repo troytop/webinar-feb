@@ -24,4 +24,4 @@ spec:
         expressions:
         - expression: has(object.metadata.labels) && has(object.metadata.labels.foo) && object.metadata.labels.foo == 'bar'
           messageExpression: "'Pod must have label foo=bar. Current labels: ' + string(object.metadata.?labels.orValue({}))"
-  validationFailureAction: Enforce
+  validationFailureAction: Audit
