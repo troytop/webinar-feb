@@ -1,0 +1,39 @@
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: require-nginx-version-tags
+  namespace: test
+spec:
+  background: true
+  rules:
+  - match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    name: check-nginx-image-tags
+    validate:
+      foreach:
+      - deny:
+          conditions:
+            any:
+            - key: "{{ element.image }}"
+              operator: AnyIn
+              value:
+              - nginx
+              - nginx:latest
+            - key: "{{ element.image }}"
+              operator: Equals
+              value: docker.io/nginx
+            - key: "{{ element.image }}"
+              operator: Equals
+              value: docker.io/nginx:latest
+            - key: "{{ element.image }}"
+              operator: Equals
+              value: library/nginx
+            - key: "{{ element.image }}"
+              operator: Equals
+              value: library/nginx:latest
+        list: request.object.spec.containers + request.object.spec.?initContainers.orValue([]) + request.object.spec.?ephemeralContainers.orValue([])
+      message: nginx images must have explicit version tags (not 'latest' or no tag) to ensure reproducible deployments
+  validationFailureAction: Audit
